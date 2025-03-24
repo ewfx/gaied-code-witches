@@ -1,4 +1,4 @@
-# 🚀 Project Name
+# 🚀 Email orchestrator
 
 ## 📌 Table of Contents
 - [Introduction](#introduction)
