@@ -1,37 +1,49 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './App.css';
 
 function App() {
   const [subject, setSubject] = useState('');
   const [content, setContent] = useState('');
-  const [pdfLink, setPdfLink] = useState('');
-  const [response, setResponse] = useState('');
+  const [file, setFile] = useState(null);
+  const [result, setResult] = useState('');
+  const [error, setError] = useState(''); 
 
-  const handleSubmit = async (event) => {
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleUpload = async (event) => {
     event.preventDefault();
-    try {
-      const response = await fetch('https://api.example.com/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ subject, content, pdfLink }),
-      });
-      const data = await response.json();
-      setResponse(JSON.stringify(data, null, 2));
-      console.log('Success:', data);
-    } catch (error) {
-      setResponse('Error: ' + error.toString());
-      console.error('Error:', error);
-    }
+      if (!file) {
+          alert('Please select a file.');
+          return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+          const response = await axios.post('http://127.0.0.1:8000/classify', formData, {
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              }
+          });
+
+          setResult(response.data);
+          setError(null);
+      } catch (err) {
+          setError('Error uploading or processing the file.');
+          setResult(null);
+      }
   };
 
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Email Orchestrator</h1>
+        <h1>Email Classification</h1>
         <div className="form-container">
-          <form onSubmit={handleSubmit}>
+          <form>
             <div>
               <input
                 type="text"
@@ -46,24 +58,25 @@ function App() {
                 placeholder="Enter email content"
                 className="content-textarea"
               />
-              <input
-                type="text"
-                value={pdfLink}
-                onChange={(e) => setPdfLink(e.target.value)}
-                placeholder="Enter PDF attachment link"
-                className="pdf-input"
-              />
+              <input type="file" onChange={handleFileChange} className="pdf-input" accept="application/msword,application/pdf,.eml" />
             </div>
             <div>
-              <button type="submit" className="submit-button">Submit</button>
+              <button type="submit" className="submit-button" onClick={handleUpload}>Upload and Classify</button>
             </div>
           </form>
-          <textarea
-            value={response}
-            readOnly
-            placeholder="Response will be shown here"
-            className="response-textarea"
-          />
+          <div
+            className="response-text"
+          >
+            {result && (
+                        <div className="mt-4">
+                            <h2 className="font-bold">Classification:</h2>
+                            <p>{result.classification}</p>
+                            <h2 className="font-bold">Confidence Score:</h2>
+                            <p>{result.confidence_score}</p>
+                        </div>
+                    )
+            }
+          </div>
         </div>
       </header>
     </div>
