@@ -13,11 +13,16 @@ from email.policy import default
 import uvicorn
 import tensorflow as tf
 from transformers import pipeline
+import spacy
+from fuzzywuzzy import process
 
 # Load environment variables from .env file
 load_dotenv()
 
 app = FastAPI()
+
+# Load spaCy's English NLP model
+nlp = spacy.load("en_core_web_sm")
 
 # Initialize Hugging Face model for text classification
 classifier = None  # Declare classifier at the module level
@@ -44,6 +49,13 @@ app.add_middleware(
 print(f"TensorFlow version: {tf.__version__}")
 print(f"Is GPU available: {tf.config.list_physical_devices('GPU')}")
 
+MAIN_REQUESTS = ["Adjustments", "AU transfer", "Closing Notice", "Commitment Change"]
+
+# Define possible sub-requests
+SUB_REQUESTS = [
+    "reallocation fees", "amendment fees", "reallocation principal",
+    "cashless", "increase", "decrease", "principal", "interest"
+]
 
 def extract_text_from_docx(file):
     try:
@@ -78,7 +90,22 @@ def extract_text_from_eml(file):
     except Exception as e:
         raise ValueError(f"Error processing EML file: {e}")
 
+def extract_sub_requests(text):
+    """Extract sub-requests using NLP and fuzzy matching."""
+    doc = nlp(text)
+    found_sub_requests = set()
 
+    for token in doc:
+        match, score = process.extractOne(token.text, SUB_REQUESTS)
+        if score > 85:  # Adjust threshold if needed
+            found_sub_requests.add(match)
+
+    return list(found_sub_requests)
+
+def identify_requests(text):
+    main_requests = [req for req in MAIN_REQUESTS if req.lower() in text.lower()]
+    sub_requests = [sub for sub in SUB_REQUESTS if sub.lower() in text.lower()]
+    return main_requests, sub_requests
 
 def shutdown_server():
     """
@@ -86,6 +113,7 @@ def shutdown_server():
     """
     uvicorn_server = uvicorn.Server(uvicorn.Config(app))
     uvicorn_server.should_exit = True
+
 
 
 @app.post("/classify")
@@ -111,12 +139,22 @@ async def classify_email(file: UploadFile = File(...)):
         
         # Debugging logs
         print(f"Extracted Text (First 500 chars): {email_text[:500]}")
+
+        main_requests, sub_requests = identify_requests(email_text)
+        # Extract sub-requests
+        sub_requests = extract_sub_requests(email_text)
         
         result = classifier(email_text)
         classification = result[0]['label']
         score = result[0]['score']
 
-        return {"classification": classification, "confidence_score": score}
+        return {
+            "classification": classification, 
+            "confidence_score": score,
+            "main_requests": main_requests,
+            "sub_requests": sub_requests
+            }
+    
     except Exception as e:
         print(f"Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
