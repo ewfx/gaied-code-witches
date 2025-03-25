@@ -94,22 +94,38 @@ def extract_text_from_eml(file):
     except Exception as e:
         raise ValueError(f"Error processing EML file: {e}")
 
+def extract_main_request(text):
+    """Extract main request using simple keyword matching."""
+    for req in MAIN_REQUESTS:
+        if req.lower() in text.lower():
+            return req
+    return None
+
+
 def extract_sub_requests(text):
     """Extract sub-requests using NLP and fuzzy matching."""
     doc = nlp(text)
     found_sub_requests = set()
 
+    # First, check exact keyword match
+    for sub_req in SUB_REQUESTS:
+        if sub_req.lower() in text.lower():
+            found_sub_requests.add(sub_req)
+
+    # Then, use NLP + fuzzy matching
     for token in doc:
         match, score = process.extractOne(token.text, SUB_REQUESTS)
-        if score > 85:  # Adjust threshold if needed
+        if score > 85 and match not in found_sub_requests:  # Avoid duplicates
             found_sub_requests.add(match)
 
     return list(found_sub_requests)
 
-def identify_requests(text):
-    main_requests = [req for req in MAIN_REQUESTS if req.lower() in text.lower()]
-    sub_requests = [sub for sub in SUB_REQUESTS if sub.lower() in text.lower()]
-    return main_requests, sub_requests
+
+def extract_loan_requests(text):
+    """Extract both main request and sub-requests from email text."""
+    main_request = extract_main_request(text)
+    sub_requests = extract_sub_requests(text)
+    return main_request, sub_requests
 
 def classify_text(text):
     """Classify email text into main request and sub-requests"""
@@ -134,20 +150,15 @@ def shutdown_server():
     uvicorn_server = uvicorn.Server(uvicorn.Config(app))
     uvicorn_server.should_exit = True
 
-
-
 @app.post("/classify")
-async def classify_email(files: List[UploadFile] = File(...)):
-    """
-    Process multiple email files and classify their content.
-    """
+async def classify_emails(files: list[UploadFile] = File(...)):
     results = []
 
-    for file in files:
-        try:
+    try:
+        for file in files:
             file_content = await file.read()
-
-            # Determine file type and extract text
+            
+            # Extract text from different file types
             if file.filename.endswith(".pdf"):
                 email_text = extract_text_from_pdf(file_content)
             elif file.filename.endswith(".docx"):
@@ -155,17 +166,34 @@ async def classify_email(files: List[UploadFile] = File(...)):
             elif file.filename.endswith(".eml"):
                 email_text = extract_text_from_eml(file_content)
             else:
-                results.append({"filename": file.filename, "error": "Unsupported file type"})
+                results.append({
+                    "filename": file.filename,
+                    "error": "Unsupported file type."
+                })
                 continue
 
-            # Classify extracted text
-            classification = classify_text(email_text)
-            results.append({"filename": file.filename, **classification})
+            # Extract main request and sub-requests
+            main_request, sub_requests = extract_loan_requests(email_text)
 
-        except Exception as e:
-            results.append({"filename": file.filename, "error": str(e)})
+            # Run classification using the model
+            result = classifier(email_text)
+            classification = result[0]['label']
+            confidence_score = result[0]['score']
 
-    return {"results": results}
+            # Append result for this file
+            results.append({
+                "filename": file.filename,
+                "classification": classification,
+                "confidence_score": confidence_score,
+                "main_request": main_request,
+                "sub_requests": sub_requests
+            })
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+    return results
+
         
         
     
