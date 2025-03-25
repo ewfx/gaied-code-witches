@@ -58,7 +58,7 @@ function App() {
                 placeholder="Enter email content"
                 className="content-textarea"
               />
-              <input type="file" onChange={handleFileChange} className="pdf-input" accept="application/msword,application/pdf,.eml" />
+              <input type="file" onChange={handleFileChange} className="pdf-input" accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,.eml,.doc,.docx" />
             </div>
             <div>
               <button type="submit" className="submit-button" onClick={handleUpload}>Upload and Classify</button>
@@ -73,6 +73,10 @@ function App() {
                             <p>{result.classification}</p>
                             <h2 className="font-bold">Confidence Score:</h2>
                             <p>{result.confidence_score}</p>
+                            <h2 className="font-bold">Requests:</h2>
+                            <p> {result.main_requests} </p>
+                            <h2 className="font-bold">Sub Requests: </h2>
+                            <p> {result.sub_requests} </p>
                         </div>
                     )
             }

@@ -15,6 +15,8 @@ import tensorflow as tf
 from transformers import pipeline
 import spacy
 from fuzzywuzzy import process
+import io
+from docx import Document
 
 # Load environment variables from .env file
 load_dotenv()
@@ -57,9 +59,10 @@ SUB_REQUESTS = [
     "cashless", "increase", "decrease", "principal", "interest"
 ]
 
-def extract_text_from_docx(file):
+def extract_text_from_docx(file_bytes):
     try:
-        doc = Document(file)
+        file_stream = io.BytesIO(file_bytes)  # Convert bytes to file-like object
+        doc = Document(file_stream)
         return '\n'.join([paragraph.text for paragraph in doc.paragraphs])
     except Exception as e:
         raise ValueError(f"Error processing DOCX file: {e}")

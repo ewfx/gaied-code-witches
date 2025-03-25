@@ -1,0 +1,41 @@
+From: Jane Smith <jane.smith@example.com>
+To: Loan Servicing Team <loanservicing@example.com>
+Subject: Request to Transfer AU for Loan #987654
+Date: Mon, 25 Mar 2025 10:00:00 -0400
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="boundary123"
+
+--boundary123
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+Please initiate an AU Transfer for Loan Account #987654. This transfer should include:
+- Reallocation of principal
+- Amendment fees adjustment
+
+Let me know if additional approvals are needed. Looking forward to your confirmation.
+
+Best,
+Jane Smith
+
+--boundary123
+Content-Type: message/rfc822
+
+From: Loan Servicing Team <loanservicing@example.com>
+To: Jane Smith <jane.smith@example.com>
+Subject: Re: Request to Transfer AU for Loan #987654
+Date: Mon, 25 Mar 2025 12:00:00 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hi Jane,
+
+We have received your request for the AU transfer. However, we need additional approvals for the amendment fees adjustment. Please confirm if you would like us to proceed with just the principal reallocation for now.
+
+Best, 
+Loan Servicing Team
+
+--boundary123--
