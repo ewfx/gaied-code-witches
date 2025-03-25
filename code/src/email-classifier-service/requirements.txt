@@ -1,0 +1,11 @@
+python-multipart 
+tf-keras
+fastapi==0.95.2
+uvicorn==0.22.0
+python-dotenv==1.0.0
+transformers==4.33.2
+spacy==3.6.1
+fuzzywuzzy==0.18.0
+python-docx==0.8.11
+PyMuPDF==1.22.5
+tensorflow==2.14.0
