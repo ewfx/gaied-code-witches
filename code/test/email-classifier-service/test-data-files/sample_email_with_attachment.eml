@@ -1,0 +1,33 @@
+Subject: Request for Adjustment on Loan Account #123456
+From: johndoe@example.com
+To: loanservicing@example.com
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============3796554958171161115=="
+
+--===============3796554958171161115==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Dear Loan Servicing Team,
+
+I am reaching out to request an adjustment on Loan Account #123456 due to a d=
+iscrepancy in the latest statement.
+
+It appears that the interest calculation for last month is incorrect. Could y=
+ou please review and reallocate the interest? Additionally, if any principal =
+reallocation is required, kindly process it and confirm the changes.
+
+Thank you for your assistance.
+
+Best regards,
+John Doe
+
+--===============3796554958171161115==
+Content-Type: text/plain
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="loan_details.txt"
+MIME-Version: 1.0
+
+VGhpcyBpcyBhIHNhbXBsZSBsb2FuIGRvY3VtZW50IGF0dGFjaG1lbnQu
+
+--===============3796554958171161115==--

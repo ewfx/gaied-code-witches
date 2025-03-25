@@ -1,0 +1,71 @@
+Subject: Request to Transfer AU for Loan #987654
+From: jane.smith@example.com
+To: loanservicing@example.com
+Date: Tue, 25 Mar 2025 09:23:52 -0000
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============8124458532660347582=="
+
+--===============8124458532660347582==
+Content-Type: multipart/alternative;
+ boundary="===============4859070440176809487=="
+
+--===============4859070440176809487==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hello,
+
+Please initiate an AU Transfer for Loan Account #987654. This transfer should=
+ include:
+- Reallocation of principal
+- Amendment fees adjustment
+
+Let me know if additional approvals are needed. Looking forward to your confi=
+rmation.
+
+Best,
+Jane Smith
+
+--===============4859070440176809487==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+
+
+--- Two days later ---
+Hello,
+
+Following up on my previous request. Can you confirm the status of the AU tra=
+nsfer?
+
+Thanks,
+Jane Smith
+
+--===============4859070440176809487==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+
+
+
+--- Four days later ---
+Dear Loan Servicing Team,
+
+Please expedite the AU Transfer for Loan #987654. This is critical, and we ne=
+ed confirmation by EOD.
+
+Best,
+Jane Smith
+
+--===============4859070440176809487==--
+
+--===============8124458532660347582==
+Content-Type: text/plain
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="loan_document.txt"
+MIME-Version: 1.0
+
+VGhpcyBpcyBhIHNhbXBsZSBsb2FuIGRvY3VtZW50IGZvciByZWZlcmVuY2Uu
+
+--===============8124458532660347582==--
