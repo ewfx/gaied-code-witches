@@ -66,7 +66,7 @@ function App() {
   return (
     <div className="App">
       <div className="App-container">
-        <h1>Email Classification</h1>
+        <h1>Email Classification Orchestrator</h1>
         <div
           className={`form-container ${dragActive ? 'drag-active' : ''}`}
           onDragOver={handleDragOver}

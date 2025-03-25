@@ -36,6 +36,20 @@ This project provides an **Email Classification Service** that processes uploade
 - Node.js and npm
 - pip (Python package manager)
 
+### Environment Variables
+Create a `.env` file and add your Google API key:
+```plaintext
+GOOGLE_API_KEY=your_api_key_here
+```
+
+### Generating a New API Key
+If your API key expires or needs updating:
+1. Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
+2. Click **"Create Credentials"** → **"API Key"**
+3. Copy the new API key
+4. Update the `.env` file
+5. Restart the service
+
 ### Backend Setup
 1. Clone the repository:
    ```bash
@@ -49,7 +63,7 @@ This project provides an **Email Classification Service** that processes uploade
 4. Download the spaCy model
     python -m spacy download en_core_web_sm
 5. Run the FastAPI server
-    uvicorn model-server:app --reload
+    uvicorn genai-model-server:app --reload
 
 ### Frontend Setup
 1. Navigate to the frontend directory:
