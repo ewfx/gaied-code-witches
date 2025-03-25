@@ -17,6 +17,7 @@ import spacy
 from fuzzywuzzy import process
 import io
 from docx import Document
+from typing import List, Dict
 
 # Load environment variables from .env file
 load_dotenv()
@@ -110,6 +111,22 @@ def identify_requests(text):
     sub_requests = [sub for sub in SUB_REQUESTS if sub.lower() in text.lower()]
     return main_requests, sub_requests
 
+def classify_text(text):
+    """Classify email text into main request and sub-requests"""
+    if not classifier:
+        raise ValueError("Classifier model not loaded.")
+
+    # Run classification model
+    result = classifier(text)
+    main_request = next((req for req in MAIN_REQUESTS if req.lower() in text.lower()), "Unknown")
+    sub_requests = [sub for sub in SUB_REQUESTS if sub.lower() in text.lower()]
+    
+    return {
+        "main_request": main_request,
+        "sub_requests": sub_requests,
+        "confidence_score": result[0]['score']
+    }
+
 def shutdown_server():
     """
     Gracefully shutdown the server.
@@ -120,47 +137,38 @@ def shutdown_server():
 
 
 @app.post("/classify")
-async def classify_email(file: UploadFile = File(...)):
-    global classifier  # Ensure we're accessing the global classifier variable
-    try:
-        if classifier is None:
-            raise HTTPException(status_code=500, detail="Classifier model not loaded.")
+async def classify_email(files: List[UploadFile] = File(...)):
+    """
+    Process multiple email files and classify their content.
+    """
+    results = []
 
-        file_content = await file.read()
+    for file in files:
+        try:
+            file_content = await file.read()
+
+            # Determine file type and extract text
+            if file.filename.endswith(".pdf"):
+                email_text = extract_text_from_pdf(file_content)
+            elif file.filename.endswith(".docx"):
+                email_text = extract_text_from_docx(file_content)
+            elif file.filename.endswith(".eml"):
+                email_text = extract_text_from_eml(file_content)
+            else:
+                results.append({"filename": file.filename, "error": "Unsupported file type"})
+                continue
+
+            # Classify extracted text
+            classification = classify_text(email_text)
+            results.append({"filename": file.filename, **classification})
+
+        except Exception as e:
+            results.append({"filename": file.filename, "error": str(e)})
+
+    return {"results": results}
         
-        if file.filename.endswith(".pdf"):
-            email_text = extract_text_from_pdf(file_content)
-        elif file.filename.endswith(".docx"):
-            email_text = extract_text_from_docx(file_content)
-        elif file.filename.endswith(".eml"):
-            email_text = extract_text_from_eml(file_content)
-        else:
-            raise HTTPException(status_code=400, detail="Unsupported file type.")
-
-        if not email_text.strip():
-            raise HTTPException(status_code=400, detail="Extracted text is empty or invalid.")
         
-        # Debugging logs
-        print(f"Extracted Text (First 500 chars): {email_text[:500]}")
-
-        main_requests, sub_requests = identify_requests(email_text)
-        # Extract sub-requests
-        sub_requests = extract_sub_requests(email_text)
-        
-        result = classifier(email_text)
-        classification = result[0]['label']
-        score = result[0]['score']
-
-        return {
-            "classification": classification, 
-            "confidence_score": score,
-            "main_requests": main_requests,
-            "sub_requests": sub_requests
-            }
     
-    except Exception as e:
-        print(f"Error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 

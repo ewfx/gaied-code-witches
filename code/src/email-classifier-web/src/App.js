@@ -3,13 +3,13 @@ import axios from 'axios';
 import './App.css';
 
 function App() {
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]); // Updated to handle multiple files
   const [result, setResult] = useState('');
   const [error, setError] = useState('');
   const [dragActive, setDragActive] = useState(false);
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    setFiles(Array.from(e.target.files)); // Convert FileList to an array
   };
 
   const handleDragOver = (e) => {
@@ -24,20 +24,20 @@ function App() {
   const handleDrop = (e) => {
     e.preventDefault();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setFiles(Array.from(e.dataTransfer.files)); // Convert FileList to an array
     }
   };
 
   const handleUpload = async (event) => {
     event.preventDefault();
-    if (!file) {
-      alert('Please select a file.');
+    if (files.length === 0) {
+      alert('Please select at least one file.');
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', file);
+    files.forEach((file) => formData.append('files', file)); // Append all files
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/classify', formData, {
@@ -49,13 +49,13 @@ function App() {
       setResult(response.data);
       setError(null);
     } catch (err) {
-      setError('Error uploading or processing the file.');
+      setError('Error uploading or processing the files.');
       setResult(null);
     }
   };
 
   const handleClear = () => {
-    setFile(null);
+    setFiles([]);
     setResult('');
     setError('');
   };
@@ -70,19 +70,22 @@ function App() {
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <form onSubmit={handleUpload} className='upload-form'>
-            <div className='file-input-container'>
+          <form onSubmit={handleUpload} className="upload-form">
+            <div className="file-input-container">
               <label
                 htmlFor="file-upload"
                 className={`file-drop-zone ${dragActive ? 'drag-active' : ''}`}
               >
-                {file ? file.name : 'Drag and drop a file here or click to upload'}
+                {files.length > 0
+                  ? files.map((file) => file.name).join(', ')
+                  : 'Drag and drop files here or click to upload'}
                 <input
                   id="file-upload"
                   type="file"
                   onChange={handleFileChange}
                   className="pdf-input"
                   accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,.eml,.doc,.docx"
+                  multiple // Allow multiple file uploads
                 />
               </label>
             </div>
@@ -101,22 +104,26 @@ function App() {
             </div>
           </form>
           <div className="response-text">
-            {result && (
+            {result && result.results && (
               <div className="mt-4">
-                <h2 className="font-bold">Classification:</h2>
-                <p>{result.classification}</p>
-                <h2 className="font-bold">Confidence Score:</h2>
-                <p>{result.confidence_score.toFixed(2)}</p>
-                <h2 className="font-bold">Main Requests:</h2>
+                <h2 className="font-bold">Classification Results:</h2>
                 <ul>
-                  {result.main_requests.map((request, index) => (
-                    <li key={index}>{request}</li>
-                  ))}
-                </ul>
-                <h2 className="font-bold">Sub Requests:</h2>
-                <ul>
-                  {result.sub_requests.map((subRequest, index) => (
-                    <li key={index}>{subRequest}</li>
+                  {result.results.map((fileResult, index) => (
+                    <li key={index} className="file-result">
+                      <h3>Filename: {fileResult.filename}</h3>
+                      <p><strong>Main Request:</strong> {fileResult.main_request}</p>
+                      <p><strong>Confidence Score:</strong> {fileResult.confidence_score.toFixed(2)}</p>
+                      <p><strong>Sub Requests:</strong></p>
+                      {fileResult.sub_requests.length > 0 ? (
+                        <ul>
+                          {fileResult.sub_requests.map((subRequest, subIndex) => (
+                            <li key={subIndex}>{subRequest}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>No sub-requests found.</p>
+                      )}
+                    </li>
                   ))}
                 </ul>
               </div>
