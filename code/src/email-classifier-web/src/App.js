@@ -38,59 +38,7 @@ function App() {
 
     const formData = new FormData();
     files.forEach((file) => formData.append('files', file)); // Append all files
-setResult({
-  "results": [
-      {
-          "filename": "loan_closing_followups-2 (1).docx",
-          "main_request": "Adjustments",
-          "sub_requests": [
-              "cashless",
-              "principal",
-              "interest"
-          ],
-          "confidence_score": 0.584236204624176
-      },
-      {
-          "filename": "loan_closing_followups-2.docx",
-          "main_request": "Adjustments",
-          "sub_requests": [
-              "cashless",
-              "principal",
-              "interest"
-          ],
-          "confidence_score": 0.584236204624176
-      },
-      {
-          "filename": "loan_closing_followups.docx",
-          "main_request": "Closing Notice",
-          "sub_requests": [
-              "principal"
-          ],
-          "confidence_score": 0.9943009614944458
-      },
-      {
-          "filename": "sample_email_chain.eml",
-          "main_request": "AU transfer",
-          "sub_requests": [
-              "amendment fees",
-              "principal"
-          ],
-          "confidence_score": 0.7919953465461731
-        },
-        {
-            "filename": "sample_email_with_attachment.eml",
-            "main_request": "Unknown",
-            "sub_requests": [
-                "principal",
-                "interest"
-            ],
-            "confidence_score": 0.9244509935379028
-        }
-    ]
-}
-
-
-)
+  
     try {
       const response = await axios.post('http://127.0.0.1:8000/classify', formData, {
         headers: {
@@ -100,6 +48,9 @@ setResult({
 
       setResult(response.data);
       setError(null);
+      console.log("response.dat", response.data);
+      console.log("response.data.results", response.data.results);
+      console.log(result);
     } catch (err) {
       setError('Error uploading or processing the files.');
    //   setResult(null);
@@ -156,27 +107,28 @@ setResult({
             </div>
           </form>
           <div className="response-text">
-            {result && result.results && (
+            {result && Array.isArray(result) && (
               <div className="mt-4">
                 <h2 className="font-bold">Classification Results:</h2>
                 <ul className='classification-list'>
-                  {result.results.map((fileResult, index) => (
-                    <li key={index} className="file-result">
-                      <h3>Filename: {fileResult.filename}</h3>
-                      <p><strong>Main Request:</strong> {fileResult.main_request}</p>
-                      <p><strong>Confidence Score:</strong> {fileResult.confidence_score.toFixed(2)}</p>
-                      <p><strong>Sub Requests:</strong></p>
-                      {fileResult.sub_requests.length > 0 ? (
-                        <ul>
-                          {fileResult.sub_requests.map((subRequest, subIndex) => (
-                            <li key={subIndex}>{subRequest}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p>No sub-requests found.</p>
-                      )}
-                    </li>
-                  ))}
+                  {result.map((fileResult, index) => (
+                     <li key={index} className="file-result">
+                     <h3>Filename: {fileResult.filename}</h3>
+                     <p><strong>Classification:</strong> {fileResult.classification}</p>
+                     <p><strong>Confidence Score:</strong> {(fileResult.confidence_score * 100).toFixed(2)}%</p>
+                     <p><strong>Main Request:</strong> {fileResult.main_request || "Unknown"}</p>
+                     <p><strong>Sub Requests:</strong></p>
+                     {fileResult.sub_requests.length > 0 ? (
+                       <ul>
+                         {fileResult.sub_requests.map((subRequest, subIndex) => (
+                           <li key={subIndex}>{subRequest}</li>
+                         ))}
+                       </ul>
+                     ) : (
+                       <p>No sub-requests found.</p>
+                     )}
+                   </li>
+                  ))} 
                 </ul>
               </div>
             )}

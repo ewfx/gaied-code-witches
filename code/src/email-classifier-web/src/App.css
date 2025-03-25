@@ -121,3 +121,24 @@ li {
 .clear-button:hover {
   background-color: #97965a;
 }
+
+.file-result {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.file-result h3 {
+  margin: 0 0 10px;
+}
+
+.file-result ul {
+  margin: 5px 0 0;
+  padding-left: 20px;
+}
+
+.file-result p {
+  margin: 5px 0;
+}
