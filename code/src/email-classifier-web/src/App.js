@@ -38,7 +38,59 @@ function App() {
 
     const formData = new FormData();
     files.forEach((file) => formData.append('files', file)); // Append all files
+setResult({
+  "results": [
+      {
+          "filename": "loan_closing_followups-2 (1).docx",
+          "main_request": "Adjustments",
+          "sub_requests": [
+              "cashless",
+              "principal",
+              "interest"
+          ],
+          "confidence_score": 0.584236204624176
+      },
+      {
+          "filename": "loan_closing_followups-2.docx",
+          "main_request": "Adjustments",
+          "sub_requests": [
+              "cashless",
+              "principal",
+              "interest"
+          ],
+          "confidence_score": 0.584236204624176
+      },
+      {
+          "filename": "loan_closing_followups.docx",
+          "main_request": "Closing Notice",
+          "sub_requests": [
+              "principal"
+          ],
+          "confidence_score": 0.9943009614944458
+      },
+      {
+          "filename": "sample_email_chain.eml",
+          "main_request": "AU transfer",
+          "sub_requests": [
+              "amendment fees",
+              "principal"
+          ],
+          "confidence_score": 0.7919953465461731
+        },
+        {
+            "filename": "sample_email_with_attachment.eml",
+            "main_request": "Unknown",
+            "sub_requests": [
+                "principal",
+                "interest"
+            ],
+            "confidence_score": 0.9244509935379028
+        }
+    ]
+}
 
+
+)
     try {
       const response = await axios.post('http://127.0.0.1:8000/classify', formData, {
         headers: {
@@ -50,7 +102,7 @@ function App() {
       setError(null);
     } catch (err) {
       setError('Error uploading or processing the files.');
-      setResult(null);
+   //   setResult(null);
     }
   };
 
@@ -62,7 +114,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <div className="App-container">
         <h1>Email Classification</h1>
         <div
           className={`form-container ${dragActive ? 'drag-active' : ''}`}
@@ -107,7 +159,7 @@ function App() {
             {result && result.results && (
               <div className="mt-4">
                 <h2 className="font-bold">Classification Results:</h2>
-                <ul>
+                <ul className='classification-list'>
                   {result.results.map((fileResult, index) => (
                     <li key={index} className="file-result">
                       <h3>Filename: {fileResult.filename}</h3>
@@ -130,7 +182,7 @@ function App() {
             )}
           </div>
         </div>
-      </header>
+      </div>
     </div>
   );
 }
