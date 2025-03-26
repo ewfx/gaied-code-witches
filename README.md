@@ -1,4 +1,4 @@
-# 🚀 Email orchestrator
+# 🚀 Email Classification Orchestrator
 
 ## 📌 Table of Contents
 - [Introduction](#introduction)
@@ -16,7 +16,7 @@
 ## 🎯 Introduction
 This project is an AI-powered email classification system designed for loan servicing use cases. It processes emails and their attachments to extract key requests and sub-requests, helping financial institutions streamline their workflow.
 ## 🎥 Demo
-📹 [Video Demo]:[https://github.com/ewfx/gaied-code-witches/tree/main/artifacts/demo] (#-demo)
+📹 [Video Demo]:[https://github.com/ewfx/gaied-code-witches/tree/main/artifacts/demo]
 
 🖼️ [Screenshots]:[https://github.com/ewfx/gaied-code-witches/tree/main/artifacts/demo](#-demo)
 
