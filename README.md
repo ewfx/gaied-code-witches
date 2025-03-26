@@ -16,34 +16,28 @@
 ## 🎯 Introduction
 This project is an AI-powered email classification system designed for loan servicing use cases. It processes emails and their attachments to extract key requests and sub-requests, helping financial institutions streamline their workflow.
 ## 🎥 Demo
-🔗 [Live Demo](#) (if applicable)  
-📹 [Video Demo](#) (if applicable)  
-🖼️ Screenshots:
+📹 [Video Demo]:[https://github.com/ewfx/gaied-code-witches/tree/main/artifacts/demo] (#-demo)
 
-![Screenshot 1](link-to-image)
+🖼️ [Screenshots]:[https://github.com/ewfx/gaied-code-witches/tree/main/artifacts/demo](#-demo)
 
 ## 💡 Inspiration
-Managing loan servicing requests manually can be time-consuming and error-prone. Automating this process using NLP and machine learning enhances efficiency, accuracy, and compliance.
+Loan servicing teams receive a high volume of emails containing critical requests such as adjustments, AU transfers, closing notices, and commitment changes. Manual processing is time-consuming and prone to errors. This solution streamlines the workflow by automatically classifying emails and extracting key details.
 ## ⚙️ What It Does
-- Reads emails and attachments (PDF, DOCX, EML)
-- Extracts main requests (e.g., Adjustments, AU Transfer, Closing Notice)
-- Identifies sub-requests (e.g., reallocation fees, amendment fees, cashless adjustments)
-- Supports multi-file uploads for batch processing 
-- Provides confidence scores for classification
+- Reads Emails & Attachments: Supports .eml, .pdf, and .docx files.
+- Identifies Request Types: Detects loan-related requests like AU transfers, reallocation fees, amendment fees, principal adjustments, and more.
+- Understands Context: Extracts intent from multiple follow-up emails in a conversation thread.
+- Provides Structured Output: Returns a categorized summary of the email content.
 
 ## 🛠️ How We Built It
-- Backend: FastAPI for handling email classification requests
-- AI Model: Hugging Face Transformers for text classification
-- NLP Techniques: Named Entity Recognition (NER) and fuzzy matching for request extraction
-- Frontend: React-based UI for user interaction
-- File Handling: PDF, DOCX, and EML processing using PyMuPDF, python-docx, and email parser
-- Infrastructure: Dockerized application for scalable deployment
+- Backend: FastAPI-based Python server for processing email content and classifying intent.
+- AI Model: Uses Google's Gemini API for text classification.
+- Frontend: React-based web application for uploading emails and viewing classification results.
+- Document Parsing: Uses PyMuPDF for PDFs, python-docx for .docx files, and email.parser for .eml files.
 
 ## 🚧 Challenges We Faced
-- Handling multiple follow-up emails and maintaining context
-- Extracting text accurately from different file formats
-- Ensuring high classification accuracy with limited training data
-- Managing real-time processing speed for a seamless user experience
+- Email Parsing Complexity: Handling various email formats and extracting meaningful text.
+- Context Retention: Ensuring that follow-up emails are correctly associated with the main request.
+- API Limitations: Managing quotas and optimizing API calls for cost efficiency.
 
 ## 🏃 How to Run
 
@@ -120,6 +114,7 @@ If your API key expires or needs updating:
 
 ## 🏗️ Tech Stack
 - 🔹 Frontend: React , Axios
+- 🔹 AI Model: Gemini API
 - 🔹 Backend: FastAPI, Hugging Face Transformers, spaCy, TensorFlow, PyMuPdf, FuzzyWuzzy, python-docx
 
 ## 👥 Team
